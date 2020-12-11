@@ -34,10 +34,13 @@ class TagViewSet(viewsets.ViewSet):
                 return JsonResponse({"error": f"Check body data "}, safe=False,
                                     status=status.HTTP_400_BAD_REQUEST)
             try:
-                #tag = HierarchicalTag.objects.create(name=key)
-
-                post_instance = ContentItem.objects.create()
-                new = post_instance.tags.add(key)
+                exist = TaggedContentItem.objects.filter(tag__name=key)
+                if not exist:
+                    post_instance = ContentItem.objects.create()
+                    new = post_instance.tags.add(key)
+                else:
+                    return JsonResponse({"error": f"Tag already exist"}, safe=False,
+                                        status=status.HTTP_400_BAD_REQUEST)
 
                 return JsonResponse(data={"succesful": f'Tag {key} was created'}, safe=False,
                                     status=status.HTTP_201_CREATED)
