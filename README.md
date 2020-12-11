@@ -1,11 +1,11 @@
 ## Features
-django-taggit
-django-mptt
-Token session
-Tags CRUD API
-User admin panel CRUD
-Admin panel User filter tags
-User custom, custom admin
+- django-taggit
+- django-mptt
+- Token session
+- Tags CRUD API
+- User admin panel CRUD
+- Admin panel User filter tags
+- User custom, custom admin
  
  ## GET /tags/
 list with hierarchy, Access: any users
