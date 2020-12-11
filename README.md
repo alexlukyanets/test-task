@@ -23,7 +23,7 @@
 ## Skills
 - [x] Docker container.
 - [x] Deploy API for testing to Heroku [Heroku app](https://sleepy-beach-16058.herokuapp.com/)
-- [x] [Documented with Postman](https://documenter.getpostman.com/view/9950425/TVmV6uJ6#b7e14f8e-98bd-4332-b0ab-3253c82d7ed1)
+- [x] [Documented with Postman](https://documenter.getpostman.com/view/9950425/TVmV6uJ6)
 
 
 
