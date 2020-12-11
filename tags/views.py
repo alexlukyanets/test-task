@@ -14,27 +14,6 @@ from userapp.models import User
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 
 
-def parse_bytes(request, multy=False):
-    d = str(request).split("&")
-    if len(d) == 2 and multy == True:
-        return False, False, False
-
-    if len(d) == 3:
-        id = d[0][2:].split("=")
-        name = d[1].split("=")
-        new_name = d[2][:-1].split("=")
-        if id[0] == "id" and name[0] == 'name' and new_name[0] == 'new_name':
-            return id[1], name[1], new_name[1]
-        else:
-            return False, False, False
-    else:
-        tag = d[0][2:].split("=")
-        user = d[1][:-1].split("=")
-        if tag[0] == "tag" and user[0] == 'user' or tag[0] == "id" and user[0] == 'name':
-            return tag[1], user[1]
-        else:
-            return False, False
-
 
 class TagViewSet(viewsets.ViewSet):
     def list(self, request):
@@ -44,10 +23,11 @@ class TagViewSet(viewsets.ViewSet):
             return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
 
     def create(self, request):
+
         if request.method == 'POST':
 
             try:
-                key = str(request.body)[7:-1]
+                key = self.request.data['tag']
                 if not key:
                     return JsonResponse({"error": f"Check body data "}, safe=False,
                                         status=status.HTTP_400_BAD_REQUEST)
@@ -63,7 +43,13 @@ class TagViewSet(viewsets.ViewSet):
                                     status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request):
-        id, name, new_name = parse_bytes(request.body, multy=True)
+        try:
+            name = self.request.data['name']
+            id = self.request.data['id']
+            new_name = self.request.data['new_name']
+        except:
+            return JsonResponse({"error": f"Check your body data"}, safe=False,
+                                status=status.HTTP_400_BAD_REQUEST)
         if id and name and new_name and name != new_name:
             try:
                 query = HierarchicalTag.objects.get(id=int(id),
@@ -137,29 +123,7 @@ class UserTagsList(generics.ListAPIView):
         return User.objects.filter(id=self.request.user.id)
 
 
-def create(self, request):
-    if request.method == 'POST':
-        try:
-            tag, user = parse_bytes(request.body)
-        except:
-            return JsonResponse({"error": f"Check body data "}, safe=False,
-                                status=status.HTTP_400_BAD_REQUEST)
-        if tag and user:
-            user = User.objects.get(username=user)
-            try:
-                TaggedContentItem.objects.get(content_object__user_id=user.id,
-                                              tag__name=tag)
-                return JsonResponse({"error": f"Tag {tag} alredy exists"}, safe=False,
-                                    status=status.HTTP_400_BAD_REQUEST)
 
-            except:
-                post_instance = ContentItem.objects.create(user=user)
-                tags = post_instance.tags.add(tag)
-                return JsonResponse(data={str(user): tag}, safe=False, status=status.HTTP_201_CREATED)
-
-        else:
-            return JsonResponse({"error": f"Check body data "}, safe=False,
-                                status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserTagsViewSet(viewsets.ViewSet):
