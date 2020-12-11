@@ -3,6 +3,7 @@ from .models import ContentItem, HierarchicalTag, TaggedContentItem
 from rest_framework_recursive.fields import RecursiveField
 from userapp.models import User
 
+
 class ReadHierarchicalTagSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     children = serializers.ListField(child=RecursiveField(), source='get_children', read_only=True)
@@ -33,3 +34,19 @@ class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'date_joined', 'is_company_admin', 'is_superuser']
+
+
+class UserTagsSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='username')
+    tags = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TaggedContentItem
+        fields = ['user', 'tags']
+
+    def get_tags(self, user):
+        try:
+            return u", ".join(o.tag.name for o in
+                              TaggedContentItem.objects.filter(content_object_id__user_id=user.id))
+        except:
+            return None

@@ -8,7 +8,7 @@ from rest_framework.decorators import permission_classes, api_view, action
 from rest_framework.renderers import JSONRenderer
 from .models import ContentItem, TaggedContentItem, HierarchicalTag
 from userapp.permissions import MyPermission
-from .serializers import ReadHierarchicalTagSerializer, TagsUserListSerializer, UserListSerializer
+from .serializers import ReadHierarchicalTagSerializer, TagsUserListSerializer, UserListSerializer, UserTagsSerializer
 from functools import partial
 from userapp.models import User
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
@@ -56,15 +56,11 @@ class TagViewSet(viewsets.ViewSet):
                                     status=status.HTTP_400_BAD_REQUEST)
             try:
                 tag = HierarchicalTag.objects.create(name=key)
-                return JsonResponse(data={"succesful": f'Tag {key} was created'}, safe=False, status=status.HTTP_201_CREATED)
+                return JsonResponse(data={"succesful": f'Tag {key} was created'}, safe=False,
+                                    status=status.HTTP_201_CREATED)
             except:
                 return JsonResponse({"error": f"Tag already exist"}, safe=False,
                                     status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
 
     def update(self, request):
         id, name, new_name = parse_bytes(request.body, multy=True)
@@ -132,6 +128,15 @@ class UserList(generics.ListAPIView):
     permission_classes = [partial(MyPermission, ['GET'])]
     queryset = User.objects.all()
 
+
+class UserTagsList(generics.ListAPIView):
+    serializer_class = UserTagsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id)
+
+
 def create(self, request):
     if request.method == 'POST':
         try:
@@ -155,3 +160,53 @@ def create(self, request):
         else:
             return JsonResponse({"error": f"Check body data "}, safe=False,
                                 status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserTagsViewSet(viewsets.ViewSet):
+    def retrieve(self, request, pk):
+        if request.method == 'GET':
+            get_queryset = User.objects.filter(pk=pk)
+            if get_queryset:
+                serializer = UserTagsSerializer(get_queryset, many=True)
+                return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+            else:
+                return JsonResponse({"error": f"User doesn't exist"}, safe=False,
+                                    status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, pk):
+        if request.method == 'PUT':
+            # try:
+            user = User.objects.get(pk=pk)
+            if user.id != self.request.user.id and not self.request.user.is_staff:
+                return JsonResponse({"error": f"You aren't admin"}, safe=False,
+                                    status=status.HTTP_400_BAD_REQUEST)
+            else:
+                tags = str(self.request.data['tag']).split(' ')
+
+                not_added_tags = ""
+                for tag in tags:
+                    exist = TaggedContentItem.objects.filter(content_object__user_id=user.id,
+                                                  tag__name=tag)
+                    if not exist:
+                        post_instance = ContentItem.objects.create(user=user)
+                        new = post_instance.tags.add(tag)
+                    else:
+                        not_added_tags += tag + " "
+
+                if not_added_tags:
+                    return JsonResponse({"success": f"Tags doesn't add {not_added_tags}becouse exist in {user}"}, safe=False,
+                                        status=status.HTTP_200_OK)
+                else:
+                    return JsonResponse({"success": f"Update {str(tags)}"}, safe=False,
+                                        status=status.HTTP_200_OK)
+            # except:
+            #     return JsonResponse({"error": f"User doesn't exist"}, safe=False,
+            #                         status=status.HTTP_400_BAD_REQUEST)
+
+
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            permission_classes = [partial(MyPermission, ['GET'])]
+        elif self.action == 'update':
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]

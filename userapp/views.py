@@ -36,8 +36,11 @@ def login(request):
                 return JsonResponse(({'error': 'Check username or password'}),
                                     status=401)
             else:
-                token = Token.objects.get(user=user)
-                return JsonResponse({'token': str(token     )}, status=200)
+                try:
+                    token = Token.objects.get(user=user)
+                except:
+                    return JsonResponse({'error': str("User hasn't token")}, status=200)
+                return JsonResponse({'token': str(token )}, status=200)
         except MultiValueDictKeyError:
             return JsonResponse(({'error': 'Please user json data in request body'}), status=401)
     else:

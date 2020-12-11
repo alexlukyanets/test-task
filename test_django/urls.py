@@ -16,13 +16,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from userapp.views import signup, login
-from tags.views import TagsUserList, TagViewSet, UserList
+from tags.views import TagsUserList, TagViewSet, UserList, UserTagsList, UserTagsViewSet
 
 snippet_list = TagViewSet.as_view({
     'get': 'list',
     'post': 'create',
     'put': 'update',
     'delete': 'destroy'
+})
+
+user_tags_list = UserTagsViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
 })
 
 urlpatterns = [
@@ -32,6 +37,9 @@ urlpatterns = [
 
     # users
     path('api/user_list/', UserList.as_view()),
+    path('api/user_tag/', UserTagsList.as_view()),
+    path('api/user_tag/<int:pk>', user_tags_list),
+
     # admin
     path('admin/', admin.site.urls),
 
