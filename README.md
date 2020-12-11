@@ -22,5 +22,5 @@
 
 ## Skills
 - :heavy_check_mark: Docker container.
-- :heavy_check_mark:  Deploy API for testing to Heroku Heroku app
-- :heavy_check_mark:  Documented with Postman
+- :heavy_check_mark:  Deploy API for testing to [Heroku app](https://sleepy-beach-16058.herokuapp.com/)
+- :heavy_check_mark:  Documented with [Postman](https://documenter.getpostman.com/view/9950425/TVmV6uJ6#de0a46d8-b378-4b16-a285-718e3c738613)
