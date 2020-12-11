@@ -30,6 +30,9 @@
 - Get tags from other user, use id, only is_customer_admin
 - Create Update Tags
 
+## Auth super user
+- username - wise
+- password - 1
 ## Skills
 - :heavy_check_mark: Docker container.
 - :heavy_check_mark:  Deploy API for testing to [Heroku app](https://sleepy-beach-16058.herokuapp.com/)
