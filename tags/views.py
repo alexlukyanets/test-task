@@ -14,7 +14,6 @@ from userapp.models import User
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 
 
-
 class TagViewSet(viewsets.ViewSet):
     def list(self, request):
         if request.method == 'GET':
@@ -123,9 +122,6 @@ class UserTagsList(generics.ListAPIView):
         return User.objects.filter(id=self.request.user.id)
 
 
-
-
-
 class UserTagsViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk):
         if request.method == 'GET':
@@ -139,8 +135,11 @@ class UserTagsViewSet(viewsets.ViewSet):
 
     def update(self, request, pk):
         if request.method == 'PUT':
-            # try:
-            user = User.objects.get(pk=pk)
+            try:
+                user = User.objects.get(pk=pk)
+            except:
+                return JsonResponse({"error": f"User doen't exist"}, safe=False,
+                                    status=status.HTTP_400_BAD_REQUEST)
             if user.id != self.request.user.id and not self.request.user.is_staff:
                 return JsonResponse({"error": f"You aren't admin"}, safe=False,
                                     status=status.HTTP_400_BAD_REQUEST)
@@ -150,7 +149,7 @@ class UserTagsViewSet(viewsets.ViewSet):
                 not_added_tags = ""
                 for tag in tags:
                     exist = TaggedContentItem.objects.filter(content_object__user_id=user.id,
-                                                  tag__name=tag)
+                                                             tag__name=tag)
                     if not exist:
                         post_instance = ContentItem.objects.create(user=user)
                         new = post_instance.tags.add(tag)
@@ -158,19 +157,48 @@ class UserTagsViewSet(viewsets.ViewSet):
                         not_added_tags += tag + " "
 
                 if not_added_tags:
-                    return JsonResponse({"success": f"Tags doesn't add {not_added_tags}becouse exist in {user}"}, safe=False,
+                    return JsonResponse({"success": f"Tags doesn't add {not_added_tags}becouse exist in {user}"},
+                                        safe=False,
                                         status=status.HTTP_200_OK)
                 else:
                     return JsonResponse({"success": f"Update {str(tags)}"}, safe=False,
                                         status=status.HTTP_200_OK)
-            # except:
-            #     return JsonResponse({"error": f"User doesn't exist"}, safe=False,
-            #                         status=status.HTTP_400_BAD_REQUEST)
 
+    def destroy(self, request, pk):
+        if request.method == 'DELETE':
+            try:
+                user = User.objects.get(pk=pk)
+            except:
+                return JsonResponse({"error": f"User doen't exist"}, safe=False,
+                                    status=status.HTTP_400_BAD_REQUEST)
+            if user.id != self.request.user.id and not self.request.user.is_staff:
+                return JsonResponse({"error": f"You aren't admin"}, safe=False,
+                                    status=status.HTTP_400_BAD_REQUEST)
+            else:
+                keys = str(self.request.data['tag']).split(' ')
+                not_delteted_tags = ""
+                for tag in keys:
+                    tags = TaggedContentItem.objects.filter(tag__name=tag)
+                    if tags.exists():
+                        for tag in tags:
+                            tag.content_object.delete()
+                            tag.delete()
+                            tag.tag.delete()
+                    else:
+                        not_delteted_tags += tag + " "
+
+                if not_delteted_tags:
+                    return JsonResponse({"success": f"Tags doesn't delete {not_delteted_tags}becouse doesn't exist in {user}"},
+                                        safe=False,
+                                        status=status.HTTP_200_OK)
+                else:
+                    return JsonResponse({"success": f"Delete {str(keys)}"}, safe=False,
+                                        status=status.HTTP_200_OK)
+        
 
     def get_permissions(self):
         if self.action == 'retrieve':
             permission_classes = [partial(MyPermission, ['GET'])]
-        elif self.action == 'update':
+        elif self.action == 'update' or 'destroy':
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]

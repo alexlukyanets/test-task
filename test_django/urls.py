@@ -28,6 +28,7 @@ snippet_list = TagViewSet.as_view({
 user_tags_list = UserTagsViewSet.as_view({
     'get': 'retrieve',
     'put': 'update',
+    'delete': 'destroy'
 })
 
 urlpatterns = [
