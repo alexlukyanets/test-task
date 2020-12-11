@@ -30,7 +30,7 @@
 - Get tags from other user, use id, only is_customer_admin
 - Create Update Tags
 
-## Auth super user
+## Auth superuser
 - username - wise
 - password - 1
 ## Skills
