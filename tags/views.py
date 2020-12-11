@@ -17,7 +17,8 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 class TagViewSet(viewsets.ViewSet):
     def list(self, request):
         if request.method == 'GET':
-            get_queryset = HierarchicalTag.objects.root_node(tree_id=1).get_ancestors(include_self=True)
+            get_queryset = HierarchicalTag.objects.root_node(tree_id=19).get_ancestors(include_self=True)
+            print(get_queryset)
             serializer = ReadHierarchicalTagSerializer(get_queryset, many=True)
             return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
 
@@ -196,13 +197,13 @@ class UserTagsViewSet(viewsets.ViewSet):
                         not_delteted_tags += tag + " "
 
                 if not_delteted_tags:
-                    return JsonResponse({"success": f"Tags doesn't delete {not_delteted_tags}becouse doesn't exist in {user}"},
-                                        safe=False,
-                                        status=status.HTTP_200_OK)
+                    return JsonResponse(
+                        {"success": f"Tags doesn't delete {not_delteted_tags}becouse doesn't exist in {user}"},
+                        safe=False,
+                        status=status.HTTP_200_OK)
                 else:
                     return JsonResponse({"success": f"Delete {str(keys)}"}, safe=False,
                                         status=status.HTTP_200_OK)
-
 
     def get_permissions(self):
         if self.action == 'retrieve':
@@ -210,3 +211,7 @@ class UserTagsViewSet(viewsets.ViewSet):
         elif self.action == 'update' or 'destroy':
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
+
+
+def index(request):
+    return render(request, 'index.html')

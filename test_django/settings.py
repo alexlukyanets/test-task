@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', default='foo')
 
 DEBUG = int(os.environ.get('DEBUG', default=0))
-
+#DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.99.100', 'sleepy-beach-16058.herokuapp.com']
 #sleepy-beach-16058
 #https://sleepy-beach-16058.herokuapp.com/

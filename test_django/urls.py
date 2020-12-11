@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from userapp.views import signup, login
-from tags.views import TagsUserList, TagViewSet, UserList, UserTagsList, UserTagsViewSet
+from tags.views import TagsUserList, TagViewSet, UserList, UserTagsList, UserTagsViewSet, index
 
 snippet_list = TagViewSet.as_view({
     'get': 'list',
@@ -48,4 +48,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/signup', signup),
     path('api/login', login),
+
+    #index
+    path('', index),
 ]
