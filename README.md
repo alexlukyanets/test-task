@@ -1,5 +1,5 @@
 ## Features
-- django-taggit
+:heavy_check_mark: django-taggit
 - django-mptt
 - Token session
 - Tags CRUD API
