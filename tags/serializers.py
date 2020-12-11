@@ -14,7 +14,16 @@ class ReadHierarchicalTagSerializer(serializers.ModelSerializer):
 
     def get_user(self, model):
         if TaggedContentItem.objects.filter(tag_id=model.id).exists():
-            return [o.content_object.user.username for o in TaggedContentItem.objects.filter(tag_id=model.id)]
+            user = []
+            for o in TaggedContentItem.objects.filter(tag_id=model.id):
+                try:
+                    user.append(o.content_object.user.username)
+                except:
+                    continue
+            if user:
+                return user
+            else:
+                return None
 
 
 class TagsUserListSerializer(serializers.ModelSerializer):
