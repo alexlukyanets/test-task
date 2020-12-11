@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .models import User
-from tags.models import ContentItem,TaggedContentItem, HierarchicalTag
+from tags.models import ContentItem, TaggedContentItem, HierarchicalTag
 
 
 class ContentItemTagInline(admin.TabularInline):
@@ -27,12 +27,8 @@ class UserAdminCustom(admin.ModelAdmin):
         ('Даты', {'fields': ('last_login', 'date_joined')}),
     )
 
-    list_display = ('username', 'is_company_admin', 'email', 'first_name', 'last_name', 'is_staff','tag_list')
+    list_display = ('username', 'is_company_admin', 'tag_list', 'email', 'first_name', 'last_name', 'is_staff',)
     list_filter = ('contentitem__tags', 'is_staff', 'is_superuser', 'is_active', 'groups')
-
-
-    # def get_queryset(self, request):
-    #     return super().get_queryset(request).prefetch_related('tags')
 
     def tag_list(self, obj):
         return u", ".join(o.tag.name for o in TaggedContentItem.objects.filter(content_object_id__user_id=obj.id))

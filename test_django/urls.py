@@ -16,11 +16,26 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from userapp.views import signup, login
+from tags.views import TagsUserList, TagViewSet, UserList
+
+snippet_list = TagViewSet.as_view({
+    'get': 'list',
+    'post': 'create',
+    'put': 'update',
+    'delete': 'destroy'
+})
 
 urlpatterns = [
+    # tags
+    path('api/tags/', snippet_list),
+    path('api/tags/<str:tags>', TagsUserList.as_view()),
+
+    # users
+    path('api/user_list/', UserList.as_view()),
+    # admin
     path('admin/', admin.site.urls),
 
-    # Auth
+    # auth
     path('api-auth/', include('rest_framework.urls')),
     path('api/signup', signup),
     path('api/login', login),

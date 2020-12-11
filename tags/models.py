@@ -12,13 +12,11 @@ from userapp.models import User
 
 class HierarchicalTag(MPTTModel, TagBase):
     name = models.CharField(max_length=50, unique=True)
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True, on_delete=models.CASCADE)
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True,
+                            on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
-
-    def get_absolute_url(self):
-        return reverse('rubric', kwargs={'pk': self.pk})
 
     class MPTTMeta:
         order_insertion_by = ['name']
@@ -28,11 +26,11 @@ class HierarchicalTag(MPTTModel, TagBase):
 
 
 class TaggedContentItem(ItemBase):
-    content_object = models.ForeignKey('ContentItem', on_delete=models.CASCADE)
     tag = models.ForeignKey('HierarchicalTag', related_name='tags', on_delete=models.CASCADE)
+    content_object = models.ForeignKey('ContentItem', on_delete=models.CASCADE)
 
 
-class ContentItem(models.Model):
+class  ContentItem(models.Model):
     tags = TaggableManager(through=TaggedContentItem, blank=True)
     user = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True)
     #
