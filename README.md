@@ -6,6 +6,7 @@
 - Кое-где криво написан код
 - Полностью тестировать heroku приложение 
 - Оптимизировать запросы
+- Подключить heroku PostgreSQL database
 
 ## Features
 - :heavy_check_mark: django-taggit
