@@ -1,11 +1,11 @@
 ## Features
 :heavy_check_mark: django-taggit
-- django-mptt
-- Token session
-- Tags CRUD API
-- User admin panel CRUD
-- Admin panel User filter tags
-- User custom, custom admin
+:heavy_check_mark: django-mptt
+:heavy_check_mark: Token session
+:heavy_check_mark: Tags CRUD API
+:heavy_check_mark:  User admin panel CRUD
+:heavy_check_mark: Admin panel User filter tags
+:heavy_check_mark: User custom, custom admin
  
  ## GET /tags/
 - list with hierarchy, Access: any users
@@ -21,6 +21,6 @@
 - Create Update Tags
 
 ## Skills
-- Docker container.
-- Deploy API for testing to Heroku Heroku app
-- Documented with Postman
+:heavy_check_mark: Docker container.
+:heavy_check_mark:  Deploy API for testing to Heroku Heroku app
+:heavy_check_mark:  Documented with Postman
