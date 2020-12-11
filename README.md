@@ -1,4 +1,4 @@
-## features
+## Features
 - [x] django-taggit
 - [x] django-mptt
 - [x] Token session
