@@ -27,7 +27,7 @@ class UserAdminCustom(admin.ModelAdmin):
         ('Даты', {'fields': ('last_login', 'date_joined')}),
     )
 
-    list_display = ('username', 'is_company_admin', 'tag_list', 'email', 'first_name', 'last_name', 'is_staff',)
+    list_display = ('username', 'is_company_admin', 'is_staff', 'tag_list', 'email', 'first_name', 'last_name')
     list_filter = ('contentitem__tags', 'is_staff', 'is_superuser', 'is_active', 'groups')
 
     def tag_list(self, obj):

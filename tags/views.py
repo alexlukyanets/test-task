@@ -34,7 +34,11 @@ class TagViewSet(viewsets.ViewSet):
                 return JsonResponse({"error": f"Check body data "}, safe=False,
                                     status=status.HTTP_400_BAD_REQUEST)
             try:
-                tag = HierarchicalTag.objects.create(name=key)
+                #tag = HierarchicalTag.objects.create(name=key)
+
+                post_instance = ContentItem.objects.create()
+                new = post_instance.tags.add(key)
+
                 return JsonResponse(data={"succesful": f'Tag {key} was created'}, safe=False,
                                     status=status.HTTP_201_CREATED)
             except:
@@ -72,17 +76,18 @@ class TagViewSet(viewsets.ViewSet):
                                 status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request):
-        keys = str(request.body)[7:-1].split('%20')
-        tags = TaggedContentItem.objects.filter(tag__name__in=keys)
+        key = self.request.data["tag"]
+        tags = TaggedContentItem.objects.filter(tag__name="Python")
+        print(tags)
         if tags.exists():
             for tag in tags:
                 tag.content_object.delete()
                 tag.delete()
                 tag.tag.delete()
-                return JsonResponse({"success": f"Tag {keys} was deleted"}, safe=False,
+                return JsonResponse({"success": f"Tag {key} was deleted"}, safe=False,
                                     status=status.HTTP_200_OK)
         else:
-            return JsonResponse({"error": f"This tag {keys} doesn't exist"}, safe=False,
+            return JsonResponse({"error": f"This tag {key} doesn't exist"}, safe=False,
                                 status=status.HTTP_400_BAD_REQUEST)
 
     def get_permissions(self):
@@ -194,7 +199,7 @@ class UserTagsViewSet(viewsets.ViewSet):
                 else:
                     return JsonResponse({"success": f"Delete {str(keys)}"}, safe=False,
                                         status=status.HTTP_200_OK)
-        
+
 
     def get_permissions(self):
         if self.action == 'retrieve':
