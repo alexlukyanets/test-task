@@ -35,5 +35,5 @@
 - password - 1
 ## Skills
 - :heavy_check_mark: Docker container.
-- :heavy_check_mark:  Deploy API for testing to [Heroku app](https://sleepy-beach-16058.herokuapp.com/)
+- :heavy_check_mark:  Deploy API for testing to [Heroku app](https://sleepy-beach-16058.herokuapp.com/admin)
 - :heavy_check_mark:  Documented with [Postman](https://documenter.getpostman.com/view/9950425/TVmV6uJ6)
